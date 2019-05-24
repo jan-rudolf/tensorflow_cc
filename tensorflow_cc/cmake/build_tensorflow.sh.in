@@ -7,7 +7,7 @@ function version_gt {
 }
 
 # configure environmental variables
-export CC_OPT_FLAGS=${CC_OPT_FLAGS:-"-march=ivybridge"}
+export CC_OPT_FLAGS=${CC_OPT_FLAGS:-"-march=march"}
 export TF_NEED_GCP=${TF_NEED_GCP:-0}
 export TF_NEED_HDFS=${TF_NEED_HDFS:-0}
 export TF_NEED_OPENCL=${TF_NEED_OPENCL:-0}
@@ -35,7 +35,10 @@ export PYTHON_LIB_PATH="$($PYTHON_BIN_PATH -c 'import site; print(site.getsitepa
 
 # configure cuda environmental variables
 
-if [ -e /opt/cuda ]; then
+if [ -e /mnt/appl/software/CUDA/10.1.105-GCC-8.2.0-2.31.1 ]; then
+    echo "Using CUDA from /mnt/appl/software/CUDA/10.1.105-GCC-8.2.0-2.31.1"
+    export CUDA_TOOLKIT_PATH=/mnt/appl/software/CUDA/10.1.105-GCC-8.2.0-2.31.1
+elif [ -e /opt/cuda ]; then
     echo "Using CUDA from /opt/cuda"
     export CUDA_TOOLKIT_PATH=/opt/cuda
 elif [ -e /usr/local/cuda ]; then
@@ -52,6 +55,9 @@ elif [ -e /usr/local/cuda/include/cudnn.h ]; then
 elif [ -e /usr/include/cudnn.h ]; then
     echo "Using CUDNN from /usr"
     export CUDNN_INSTALL_PATH=/usr
+elif [ -e /mnt/appl/software/cuDNN/7.5.0.56-fosscuda-2019a/include/cudnn.h ]; then
+    echo "Using CUDNN from /mnt/appl/software/cuDNN/7.5.0.56-fosscuda-2019a/"
+    export CUDNN_INSTALL_PATH=/mnt/appl/software/cuDNN/7.5.0.56-fosscuda-2019a
 fi
 
 if [ "@ALLOW_CUDA@" = "ON" ] && [ -n "${CUDA_TOOLKIT_PATH}" ]; then
@@ -69,14 +75,19 @@ if [ "@ALLOW_CUDA@" = "ON" ] && [ -n "${CUDA_TOOLKIT_PATH}" ]; then
     # choose the right version of CUDA compiler
     if [ -z "$GCC_HOST_COMPILER_PATH" ]; then
         if   hash gcc 2>/dev/null && version_gt 8.5 `gcc -dumpversion`; then
+            echo "Using GCC 8"
             export GCC_HOST_COMPILER_PATH=${GCC_HOST_COMPILER_PATH:-"/usr/bin/gcc"}
         elif hash gcc-7 2>/dev/null && version_gt 7.5 `gcc-7 -dumpversion`; then
+            echo "Using GCC 7"
             export GCC_HOST_COMPILER_PATH=${GCC_HOST_COMPILER_PATH:-"/usr/bin/gcc-7"}
         elif hash gcc-6 2>/dev/null && version_gt 6.4 `gcc-6 -dumpversion`; then
+            echo "Using GCC 6"
             export GCC_HOST_COMPILER_PATH=${GCC_HOST_COMPILER_PATH:-"/usr/bin/gcc-6"}
         elif hash gcc-5 2>/dev/null && version_gt 5.5 `gcc-5 -dumpversion`; then
+            echo "USING GCC 5"
             export GCC_HOST_COMPILER_PATH=${GCC_HOST_COMPILER_PATH:-"/usr/bin/gcc-5"}
         elif hash gcc-4 2>/dev/null && version_gt 4.9 `gcc-4 -dumpversion`; then
+            echo "USING GCC 4"
             export GCC_HOST_COMPILER_PATH=${GCC_HOST_COMPILER_PATH:-"/usr/bin/gcc-4"}
         else
             echo "No supported CUDA compiler available. If you are sure your compiler"
@@ -100,6 +111,7 @@ fi
 ./configure
 bazel build --config=opt \
             --config=monolithic \
+            --jobs=auto \
             $cuda_config_opts \
             tensorflow:libtensorflow_cc.so
 bazel shutdown
