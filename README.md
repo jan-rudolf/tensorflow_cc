@@ -160,37 +160,59 @@ cmake .. && make
 If you are still unsure, consult the Dockerfiles for
 [Ubuntu](Dockerfiles/ubuntu-shared) and [Arch Linux](Dockerfiles/archlinux-shared).
 
-Compile Tensorflow C++ with GPU support on RCI cluster
-======================================================
-1] Ask for a machine with GPU and with 50G memory and 50G disk space (can be reduced, but that is verified it is working)
-	srun ...
-2] Go into the local scratch storage (/data/temporary [1])
-	export SCRATCH_DIR=/data/temporary
-	mkdir $SCRATCH_DIR
-3] Create a directory for Bazel's cache 
-	mkdir bazel_cache
-4] Git clone my version of FloopCZ/tensorflow_cc [2] you find here
-	git clone <TBA>
-5] Make a symlink for Bazel's cache
+## Compile Tensorflow C++ with GPU support on RCI cluster
+
+### 1) Ask for a machine with GPU and with 50G memory and 50G disk space (can be reduced, but that is verified it is working)
+```
+srun ...
+```
+### 2) Go into the local scratch storage (/data/temporary [1])
+```	
+export SCRATCH_DIR=/data/temporary
+mkdir $SCRATCH_DIR
+```
+### 3) Create a directory for Bazel's cache 
+```
+mkdir bazel_cache
+```
+### 4) Git clone my version of FloopCZ/tensorflow_cc [2] you find here
+```	
+git clone <TBA>
+```
+### 5) Make a symlink for Bazel's cache
+```
 	ln -fs $SCRATCH_DIR/bazel_cache $HOME/.cache/bazel
-6] Set up Bazel's enviroment variable with the custome cache directory 
-	export TEST_TMPDIR=$SCRATCH_DIR/bazel_cache
-7] Add all dependant modules
-	ml cuDNN/7.5.0.56-fosscuda-2018b # this also includes GCC, CUDA etc. 
-	ml Autotools/20180311-GCCcore-8.2.0
-	ml wheel/0.31.1-fosscuda-2019a-Python-3.7.2
-	ml NCCL/2.4.2-fosscuda-2019a # mozna neni potreba
-	ml Bazel/0.20.0-GCCcore-8.2.0
-	ml CMake/3.13.3-GCCcore-8.2.0
-8] Create a build directory
-	cd tensorflow_cc/tensorflow_cc/
-	mkdir build && cd build
-9] Create makefile for shared library (default allow CUDA is ON)
-	cmake -DTENSORFLOW_STATIC=OFF -DTENSORFLOW_SHARED=ON ..
-10] Run compilation (takes few hours)
-	make
-12] After compilation, copy header files and object files where you need
+```
+### 6) Set up Bazel's enviroment variable with the custome cache directory 
+```	
+export TEST_TMPDIR=$SCRATCH_DIR/bazel_cache
+```
+### 7) Add all dependant modules
+```	
+ml cuDNN/7.5.0.56-fosscuda-2018b # this also includes GCC, CUDA, libtool etc. 
+ml Autotools/20180311-GCCcore-8.2.0
+ml wheel/0.31.1-fosscuda-2019a-Python-3.7.2
+ml NCCL/2.4.2-fosscuda-2019a # mozna neni potreba
+ml Bazel/0.20.0-GCCcore-8.2.0
+ml CMake/3.13.3-GCCcore-8.2.0
+```
+### 8) Create a build directory
+```
+cd tensorflow_cc/tensorflow_cc/
+mkdir build && cd build
+```
+### 9) Create makefile for shared library (default allow CUDA is ON)
+```	
+cmake -DTENSORFLOW_STATIC=OFF -DTENSORFLOW_SHARED=ON ..
+```
+### 10) Run compilation (takes few hours)
+```	
+make
+```
+### 11) After compilation, copy header files and object files where you need
+```
 	make install	
+```
 
 References:
 [1] https://login.rci.cvut.cz/wiki/storage
