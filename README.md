@@ -162,9 +162,11 @@ If you are still unsure, consult the Dockerfiles for
 
 ## Compile Tensorflow C++ with GPU support on RCI cluster
 
-### 1) Ask for a machine with GPU and with 50G memory and 50G disk space (can be reduced, but that is verified it is working)
+Elapsed time: 13096.862s for using 12 cores.
+
+### 1) Ask for a machine with 2x CPU, GPU and with 50G memory and 100G disk space (can be reduced, but that is verified it is working)
 ```
-srun ...
+srun -v -p gpu --gres=gpu:1 --mpi openmpi --cpus-per-task 2 --mem 50G --tmp 100G --pty bash -i
 ```
 ### 2) Go into the local scratch storage (/data/temporary [1])
 ```	
