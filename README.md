@@ -179,7 +179,7 @@ mkdir bazel_cache
 ```
 ### 4) Git clone my version of FloopCZ/tensorflow_cc [2] you find here
 ```	
-git clone <TBA>
+git clone https://github.com/jan-rudolf/tensorflow_cc
 ```
 ### 5) Make a symlink for Bazel's cache
 ```
