@@ -166,7 +166,7 @@ Elapsed time: 13096.862s for using 12 cores.
 
 ### 1) Ask for a machine with 2x CPU, GPU and with 50G memory and 100G disk space (can be reduced, but that is verified it is working)
 ```
-srun -v -p gpu --gres=gpu:1 --mpi openmpi --cpus-per-task 2 --mem 50G --tmp 100G --pty bash -i
+srun -v -p gpu --gres=gpu:1 --mem 50G --tmp 100G --pty bash -i
 ```
 ### 2) Go into the local scratch storage (/data/temporary [1])
 ```	
@@ -191,7 +191,7 @@ export TEST_TMPDIR=$SCRATCH_DIR/bazel_cache
 ```
 ### 7) Add all dependant modules
 ```	
-ml cuDNN/7.5.0.56-fosscuda-2018b # this also includes GCC, CUDA, libtool etc. 
+ml cuDNN/7.5.0.56-fosscuda-2019a # this also includes GCC, CUDA, libtool etc. 
 ml Autotools/20180311-GCCcore-8.2.0
 ml wheel/0.31.1-fosscuda-2019a-Python-3.7.2
 ml NCCL/2.4.2-fosscuda-2019a # mozna neni potreba
